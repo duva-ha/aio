@@ -1,0 +1,15 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div>
+  <input type="text" id="label" placeholder="Tên mục">
+  <input type="number" id="dataValue" placeholder="Giá trị">
+  <select id="chartType">
+    <option value="bar">Biểu đồ cột</option>
+    <option value="pie">Biểu đồ tròn</option>
+  </select>
+  <button onclick="updateChart()">Thêm dữ liệu</button>
+</div>
+
+<div style="width: 400px; height: 400px;">
+  <canvas id="myChart"></canvas>
+</div>
