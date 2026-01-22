@@ -3,109 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giviso - Đánh giá Kế hoạch & Kết quả</title>
+    <title>Phân tích Kết quả Học tập</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .field-input { @apply w-full px-2 py-2 border border-slate-200 rounded text-sm outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-center; }
-        .status-badge { @apply text-[10px] font-bold py-1 px-2 rounded-full text-center block; }
-        .status-neutral { @apply bg-slate-100 text-slate-400; }
-        .status-success { @apply bg-emerald-100 text-emerald-700; }
-        .status-fail { @apply bg-red-100 text-red-700; }
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .field-input { @apply w-full px-3 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 transition-all text-center text-sm; }
+        .status-pill { @apply px-2 py-1 rounded-md text-[10px] font-bold uppercase; }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
-    <div class="max-w-7xl mx-auto">
-        <header class="mb-6 flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800 italic">Giviso <span class="text-indigo-600">Analytics</span></h1>
-                <p class="text-slate-500 text-sm">Hệ thống so sánh chỉ tiêu giảng dạy</p>
-            </div>
-            <button onclick="resetData()" class="bg-white border border-slate-200 text-slate-600 text-xs font-semibold px-4 py-2 rounded-lg hover:bg-slate-50 transition-all shadow-sm">
-                LÀM MỚI TẤT CẢ
-            </button>
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Trình tạo biểu đồ so sánh</h1>
+            <p class="text-gray-500 text-sm">So sánh Kế hoạch và Kết quả thực tế (Tốt, Khá, Đạt, Chưa đạt)</p>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-5">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                     <div class="grid grid-cols-2 gap-4 mb-6">
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Lớp</label>
-                            <input type="text" id="classInput" placeholder="10A7" class="field-input !text-left focus:border-indigo-500">
+                            <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Lớp</label>
+                            <input type="text" id="classInput" placeholder="VD: 10A7" class="field-input !text-left">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Môn học</label>
-                            <input type="text" id="subjectInput" placeholder="Công nghệ" class="field-input !text-left focus:border-indigo-500">
+                            <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Môn học</label>
+                            <input type="text" id="subjectInput" placeholder="VD: Công nghệ" class="field-input !text-left">
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto">
-                        <table class="w-full mb-4">
-                            <thead>
-                                <tr class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                                    <th class="text-left pb-3">Tiêu chí</th>
-                                    <th class="pb-3 px-2">Kế hoạch</th>
-                                    <th class="pb-3 px-2">Kết quả</th>
-                                    <th class="pb-3 text-right">Ghi chú</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100">
-                                <tr>
-                                    <td class="py-3 text-sm font-semibold text-slate-700">Tốt</td>
-                                    <td class="px-2"><input type="number" id="p_1" oninput="compare(1)" class="field-input" placeholder="0"></td>
-                                    <td class="px-2"><input type="number" id="r_1" oninput="compare(1)" class="field-input bg-indigo-50/30 border-indigo-100" placeholder="0"></td>
-                                    <td class="text-right"><span id="note_1" class="status-badge status-neutral">Chờ nhập</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3 text-sm font-semibold text-slate-700">Khá</td>
-                                    <td class="px-2"><input type="number" id="p_2" oninput="compare(2)" class="field-input" placeholder="0"></td>
-                                    <td class="px-2"><input type="number" id="r_2" oninput="compare(2)" class="field-input bg-indigo-50/30 border-indigo-100" placeholder="0"></td>
-                                    <td class="text-right"><span id="note_2" class="status-badge status-neutral">Chờ nhập</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3 text-sm font-semibold text-slate-700">Đạt</td>
-                                    <td class="px-2"><input type="number" id="p_3" oninput="compare(3)" class="field-input" placeholder="0"></td>
-                                    <td class="px-2"><input type="number" id="r_3" oninput="compare(3)" class="field-input bg-indigo-50/30 border-indigo-100" placeholder="0"></td>
-                                    <td class="text-right"><span id="note_3" class="status-badge status-neutral">Chờ nhập</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3 text-sm font-semibold text-slate-700">C.Đạt</td>
-                                    <td class="px-2"><input type="number" id="p_4" oninput="compare(4)" class="field-input" placeholder="0"></td>
-                                    <td class="px-2"><input type="number" id="r_4" oninput="compare(4)" class="field-input bg-indigo-50/30 border-indigo-100" placeholder="0"></td>
-                                    <td class="text-right"><span id="note_4" class="status-badge status-neutral">Chờ nhập</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-12 gap-2 text-[10px] font-bold text-gray-400 uppercase">
+                            <div class="col-span-3">Tiêu chí</div>
+                            <div class="col-span-3 text-center">Kế hoạch</div>
+                            <div class="col-span-3 text-center">Kết quả</div>
+                            <div class="col-span-3 text-right">Ghi chú</div>
+                        </div>
 
-                    <button onclick="drawChart()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl mt-4 transition-all shadow-lg shadow-indigo-100 active:scale-[0.98]">
-                        CẬP NHẬT BIỂU ĐỒ
-                    </button>
+                        <div id="inputRows" class="space-y-3">
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <div class="col-span-3 text-sm font-medium text-gray-700">Tốt</div>
+                                <div class="col-span-3"><input type="number" id="p1" oninput="updateNote(1)" class="field-input" placeholder="0"></div>
+                                <div class="col-span-3"><input type="number" id="r1" oninput="updateNote(1)" class="field-input bg-blue-50" placeholder="0"></div>
+                                <div class="col-span-3 text-right"><span id="n1" class="status-pill bg-gray-100 text-gray-400">---</span></div>
+                            </div>
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <div class="col-span-3 text-sm font-medium text-gray-700">Khá</div>
+                                <div class="col-span-3"><input type="number" id="p2" oninput="updateNote(2)" class="field-input" placeholder="0"></div>
+                                <div class="col-span-3"><input type="number" id="r2" oninput="updateNote(2)" class="field-input bg-blue-50" placeholder="0"></div>
+                                <div class="col-span-3 text-right"><span id="n2" class="status-pill bg-gray-100 text-gray-400">---</span></div>
+                            </div>
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <div class="col-span-3 text-sm font-medium text-gray-700">Đạt</div>
+                                <div class="col-span-3"><input type="number" id="p3" oninput="updateNote(3)" class="field-input" placeholder="0"></div>
+                                <div class="col-span-3"><input type="number" id="r3" oninput="updateNote(3)" class="field-input bg-blue-50" placeholder="0"></div>
+                                <div class="col-span-3 text-right"><span id="n3" class="status-pill bg-gray-100 text-gray-400">---</span></div>
+                            </div>
+                            <div class="grid grid-cols-12 gap-2 items-center">
+                                <div class="col-span-3 text-sm font-medium text-gray-700">C.Đạt</div>
+                                <div class="col-span-3"><input type="number" id="p4" oninput="updateNote(4)" class="field-input" placeholder="0"></div>
+                                <div class="col-span-3"><input type="number" id="r4" oninput="updateNote(4)" class="field-input bg-blue-50" placeholder="0"></div>
+                                <div class="col-span-3 text-right"><span id="n4" class="status-pill bg-gray-100 text-gray-400">---</span></div>
+                            </div>
+                        </div>
+
+                        <button onclick="renderChart()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl mt-4 transition-all shadow-lg active:scale-95">
+                            Cập nhật biểu đồ
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div class="lg:col-span-7">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-full flex flex-col min-h-[500px]">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                        <div>
-                            <h2 id="chartTitle" class="text-lg font-bold text-slate-700">Phân tích trực quan</h2>
-                            <p class="text-xs text-slate-400">Dữ liệu so sánh giữa chỉ tiêu và thực tế</p>
-                        </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-full min-h-[450px] flex flex-col">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 id="chartHeader" class="text-lg font-bold text-gray-700">Xem trước kết quả</h2>
                         <div class="flex gap-4">
-                            <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
-                                <span class="w-3 h-3 rounded bg-slate-200"></span> Kế hoạch
+                            <div class="flex items-center gap-1 text-[10px] font-bold text-gray-400 uppercase">
+                                <span class="w-3 h-3 bg-gray-200 rounded-sm"></span> Kế hoạch
                             </div>
-                            <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
-                                <span class="w-3 h-3 rounded bg-indigo-600"></span> Kết quả
+                            <div class="flex items-center gap-1 text-[10px] font-bold text-gray-400 uppercase">
+                                <span class="w-3 h-3 bg-blue-500 rounded-sm"></span> Kết quả
                             </div>
                         </div>
                     </div>
                     <div class="relative flex-grow">
-                        <canvas id="compChart"></canvas>
+                        <canvas id="myChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -113,51 +99,51 @@
     </div>
 
     <script>
-        let myChart;
-        const ctx = document.getElementById('compChart').getContext('2d');
+        let chartInstance;
+        const ctx = document.getElementById('myChart').getContext('2d');
 
-        function compare(rowId) {
-            const plan = parseFloat(document.getElementById(`p_${rowId}`).value);
-            const res = parseFloat(document.getElementById(`r_${rowId}`).value);
-            const note = document.getElementById(`note_${rowId}`);
+        function updateNote(id) {
+            const plan = parseFloat(document.getElementById(`p${id}`).value);
+            const res = parseFloat(document.getElementById(`r${id}`).value);
+            const noteSpan = document.getElementById(`n${id}`);
 
             if (isNaN(plan) || isNaN(res)) {
-                note.innerText = "Chờ nhập";
-                note.className = "status-badge status-neutral";
+                noteSpan.innerText = "---";
+                noteSpan.className = "status-pill bg-gray-100 text-gray-400";
                 return;
             }
 
             if (res >= plan) {
-                note.innerText = "ĐẠT";
-                note.className = "status-badge status-success";
+                noteSpan.innerText = "Đạt";
+                noteSpan.className = "status-pill bg-green-100 text-green-600";
             } else {
-                note.innerText = "CHƯA ĐẠT";
-                note.className = "status-badge status-fail";
+                noteSpan.innerText = "Chưa đạt";
+                noteSpan.className = "status-pill bg-red-100 text-red-600";
             }
         }
 
-        function drawChart() {
+        function renderChart() {
             const labels = ['Tốt', 'Khá', 'Đạt', 'Chưa đạt'];
             const planData = [
-                document.getElementById('p_1').value || 0,
-                document.getElementById('p_2').value || 0,
-                document.getElementById('p_3').value || 0,
-                document.getElementById('p_4').value || 0
+                document.getElementById('p1').value || 0,
+                document.getElementById('p2').value || 0,
+                document.getElementById('p3').value || 0,
+                document.getElementById('p4').value || 0
             ];
             const resData = [
-                document.getElementById('r_1').value || 0,
-                document.getElementById('r_2').value || 0,
-                document.getElementById('r_3').value || 0,
-                document.getElementById('r_4').value || 0
+                document.getElementById('r1').value || 0,
+                document.getElementById('r2').value || 0,
+                document.getElementById('r3').value || 0,
+                document.getElementById('r4').value || 0
             ];
 
-            const cls = document.getElementById('classInput').value || '---';
-            const sub = document.getElementById('subjectInput').value || '---';
-            document.getElementById('chartTitle').innerText = `Lớp ${cls} - Môn: ${sub}`;
+            const className = document.getElementById('classInput').value || '---';
+            const subject = document.getElementById('subjectInput').value || '---';
+            document.getElementById('chartHeader').innerText = `Lớp: ${className} | Môn: ${subject}`;
 
-            if (myChart) myChart.destroy();
+            if (chartInstance) chartInstance.destroy();
 
-            myChart = new Chart(ctx, {
+            chartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
@@ -165,37 +151,31 @@
                         {
                             label: 'Kế hoạch',
                             data: planData,
-                            backgroundColor: '#e2e8f0',
-                            borderRadius: 5,
+                            backgroundColor: '#e5e7eb',
+                            borderRadius: 4
                         },
                         {
                             label: 'Kết quả',
                             data: resData,
-                            backgroundColor: '#4f46e5',
-                            borderRadius: 5,
+                            backgroundColor: '#3b82f6',
+                            borderRadius: 4
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
                         x: { grid: { display: false } }
-                    },
-                    plugins: { legend: { display: false } }
+                    }
                 }
             });
         }
 
-        function resetData() {
-            document.querySelectorAll('input').forEach(i => i.value = '');
-            for(let i=1; i<=4; i++) compare(i);
-            drawChart();
-        }
-
         // Khởi tạo biểu đồ trống
-        drawChart();
+        renderChart();
     </script>
 </body>
 </html>
