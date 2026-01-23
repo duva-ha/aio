@@ -3,83 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Giáo dục - Nhập Excel</title>
+    <title>So sánh Kế hoạch & Kết quả - 2 File</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-        .field-input { @apply w-full px-2 py-1 border border-gray-200 rounded outline-none focus:ring-2 focus:ring-blue-500 text-center text-sm; }
-        .status-pill { @apply px-2 py-0.5 rounded text-[10px] font-bold uppercase inline-block min-w-[60px] text-center; }
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .btn-action { @apply flex-1 px-4 py-3 rounded-xl font-bold text-sm transition-all shadow-sm flex items-center justify-center gap-2; }
+        .status-pill { @apply px-2 py-0.5 rounded text-[10px] font-bold uppercase; }
     </style>
 </head>
-<body class="p-4 md:p-6">
+<body class="p-4 md:p-8 text-slate-700">
 
-    <div class="max-w-7xl mx-auto">
-        <header class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8 flex flex-col md:flex-row justify-between items-end gap-4 border-b border-slate-200 pb-6">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Hệ thống Phân tích Đa lớp</h1>
-                <p class="text-gray-500 text-sm">Hỗ trợ nhập liệu thủ công hoặc từ file Excel</p>
+                <h1 class="text-3xl font-bold text-slate-900">Đối soát Kế hoạch & Kết quả</h1>
+                <p class="text-slate-500">Tự động khớp dữ liệu từ hai file Excel riêng biệt</p>
             </div>
-            <div class="flex gap-2">
-                <input type="file" id="excelFile" class="hidden" accept=".xlsx, .xls" onchange="handleExcel(this)">
-                <button onclick="document.getElementById('excelFile').click()" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all">
-                    📥 NHẬP TỪ EXCEL
-                </button>
-                <button onclick="clearAll()" class="bg-white border border-gray-200 text-red-500 px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-50 transition-all">
-                    XÓA HẾT
-                </button>
-            </div>
+            <button onclick="location.reload()" class="text-slate-400 hover:text-red-500 text-xs font-bold uppercase tracking-widest">Làm mới trang</button>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-4">
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
-                    <h2 class="text-sm font-bold mb-4 text-blue-600 uppercase italic">Thêm lớp đơn lẻ</h2>
-                    <div class="grid grid-cols-2 gap-3 mb-4">
-                        <input type="text" id="classIn" placeholder="Lớp (10A7)" class="field-input !text-left">
-                        <input type="text" id="subIn" placeholder="Môn học" class="field-input !text-left">
-                    </div>
-                    <table class="w-full text-xs">
-                        <thead>
-                            <tr class="text-gray-400"><th>Tiêu chí</th><th>Kế hoạch</th><th>Kết quả</th></tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-50">
-                            <tr><td class="py-2">Tốt</td><td><input type="number" id="p1" class="field-input"></td><td><input type="number" id="r1" class="field-input bg-blue-50"></td></tr>
-                            <tr><td class="py-2">Khá</td><td><input type="number" id="p2" class="field-input"></td><td><input type="number" id="r2" class="field-input bg-blue-50"></td></tr>
-                            <tr><td class="py-2">Đạt</td><td><input type="number" id="p3" class="field-input"></td><td><input type="number" id="r3" class="field-input bg-blue-50"></td></tr>
-                            <tr><td class="py-2 text-red-500">Chưa đạt</td><td><input type="number" id="p4" class="field-input"></td><td><input type="number" id="r4" class="field-input bg-red-50"></td></tr>
-                        </tbody>
-                    </table>
-                    <button onclick="saveClass()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg mt-4 hover:bg-blue-700">LƯU LỚP NÀY</button>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div class="bg-white p-6 rounded-2xl border border-dashed border-blue-300 flex flex-col items-center">
+                <span class="text-blue-500 mb-2">📁 Bước 1</span>
+                <input type="file" id="planFile" class="hidden" accept=".xlsx, .xls" onchange="readExcel(this, 'plan')">
+                <button onclick="document.getElementById('planFile').click()" class="btn-action bg-blue-600 text-white hover:bg-blue-700 w-full">
+                    NHẬP FILE KẾ HOẠCH
+                </button>
+                <div id="planStatus" class="mt-2 text-xs text-slate-400 italic font-medium">Chưa có dữ liệu kế hoạch</div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-dashed border-emerald-300 flex flex-col items-center">
+                <span class="text-emerald-500 mb-2">📁 Bước 2</span>
+                <input type="file" id="resultFile" class="hidden" accept=".xlsx, .xls" onchange="readExcel(this, 'result')">
+                <button onclick="document.getElementById('resultFile').click()" class="btn-action bg-emerald-600 text-white hover:bg-emerald-700 w-full">
+                    NHẬP FILE KẾT QUẢ
+                </button>
+                <div id="resultStatus" class="mt-2 text-xs text-slate-400 italic font-medium">Chưa có dữ liệu kết quả</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-12">
+                <div class="bg-white p-6 rounded-2xl shadow-sm h-[400px]">
+                    <h2 class="font-bold text-slate-800 mb-4 uppercase text-sm tracking-widest">So sánh Trung bình cộng toàn khối</h2>
+                    <canvas id="mainChart"></canvas>
                 </div>
             </div>
 
-            <div class="lg:col-span-8">
-                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 h-full">
-                    <h2 class="text-sm font-bold mb-4 text-gray-700">BIỂU ĐỒ TRUNG BÌNH CỦA TẤT CẢ CÁC LỚP</h2>
-                    <div class="h-[300px]">
-                        <canvas id="summaryChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <div class="lg:col-span-12 overflow-x-auto">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-                    <table class="w-full text-sm text-left border-collapse">
-                        <thead class="bg-gray-50 text-gray-400 uppercase text-[10px]">
+            <div class="lg:col-span-12">
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 border-b border-slate-100">
                             <tr>
-                                <th class="p-4">Lớp / Môn</th>
-                                <th class="text-center">Tốt (KH/KQ)</th>
-                                <th class="text-center">Khá (KH/KQ)</th>
-                                <th class="text-center">Đạt (KH/KQ)</th>
-                                <th class="text-center text-red-400">C.Đạt (KH/KQ)</th>
-                                <th class="text-center">Đánh giá chung</th>
+                                <th class="p-4 text-xs font-bold text-slate-400 uppercase">Lớp</th>
+                                <th class="text-center text-xs font-bold text-slate-400 uppercase">Tốt (KH/KQ)</th>
+                                <th class="text-center text-xs font-bold text-slate-400 uppercase">Khá (KH/KQ)</th>
+                                <th class="text-center text-xs font-bold text-slate-400 uppercase">Đạt (KH/KQ)</th>
+                                <th class="text-center text-xs font-bold text-red-400 uppercase">Chưa đạt (KH/KQ)</th>
+                                <th class="text-right p-4 text-xs font-bold text-slate-400 uppercase">Đánh giá</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody"></tbody>
-                        <tfoot id="tableFoot" class="bg-blue-50 font-bold text-blue-700"></tfoot>
+                        <tbody id="tableBody" class="divide-y divide-slate-50">
+                            <tr><td colspan="6" class="p-8 text-center text-slate-400 italic">Vui lòng nhập cả 2 file để bắt đầu so sánh...</td></tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -87,48 +76,33 @@
     </div>
 
     <script>
-        let classList = [];
-        let chart;
+        let db = {}; // Cấu trúc: { "10A1": { p: [0,0,0,0], r: [0,0,0,0] } }
+        let chartInstance;
 
-        // Xử lý File Excel
-        function handleExcel(input) {
+        function readExcel(input, type) {
             const file = input.files[0];
             const reader = new FileReader();
             reader.onload = (e) => {
                 const data = new Uint8Array(e.target.result);
                 const workbook = XLSX.read(data, {type: 'array'});
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                const rows = XLSX.utils.sheet_to_json(firstSheet, {header: 1});
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(sheet, {header: 1});
 
-                // Bỏ qua hàng tiêu đề (hàng 0), duyệt từ hàng 1
-                for(let i = 1; i < rows.length; i++) {
-                    const r = rows[i];
-                    if(r.length < 2) continue; // Bỏ qua dòng trống
+                rows.forEach((row, index) => {
+                    if (index === 0 || !row[0]) return; // Bỏ qua tiêu đề
+                    const className = String(row[0]).trim();
+                    if (!db[className]) db[className] = { p: [0,0,0,0], r: [0,0,0,0] };
                     
-                    classList.push({
-                        name: r[0], sub: r[1],
-                        p: [r[2]||0, r[4]||0, r[6]||0, r[8]||0],
-                        r: [r[3]||0, r[5]||0, r[7]||0, r[9]||0]
-                    });
-                }
+                    const values = [row[1]||0, row[2]||0, row[3]||0, row[4]||0];
+                    if (type === 'plan') db[className].p = values;
+                    else db[className].r = values;
+                });
+
+                document.getElementById(`${type}Status`).innerText = `Đã tải ${Object.keys(db).length} lớp`;
+                document.getElementById(`${type}Status`).className = "mt-2 text-xs text-blue-600 font-bold italic";
                 updateUI();
-                input.value = ''; // Reset input file
             };
             reader.readAsArrayBuffer(file);
-        }
-
-        function saveClass() {
-            const className = document.getElementById('classIn').value;
-            if(!className) return alert("Cần tên lớp");
-            classList.push({
-                name: className,
-                sub: document.getElementById('subIn').value,
-                p: [1,2,3,4].map(i => parseFloat(document.getElementById(`p${i}`).value) || 0),
-                r: [1,2,3,4].map(i => parseFloat(document.getElementById(`r${i}`).value) || 0)
-            });
-            updateUI();
-            [1,2,3,4].forEach(i => { document.getElementById(`p${i}`).value=''; document.getElementById(`r${i}`).value=''; });
-            document.getElementById('classIn').value='';
         }
 
         function getStatus(plan, res, isCDat) {
@@ -140,55 +114,54 @@
 
         function updateUI() {
             const tbody = document.getElementById('tableBody');
-            const tfoot = document.getElementById('tableFoot');
             tbody.innerHTML = '';
+            
             let sumP = [0,0,0,0], sumR = [0,0,0,0];
+            const classes = Object.keys(db);
 
-            classList.forEach(item => {
+            classes.forEach(cls => {
+                const item = db[cls];
                 item.p.forEach((v, i) => sumP[i] += v);
                 item.r.forEach((v, i) => sumR[i] += v);
+
                 tbody.innerHTML += `
-                    <tr class="border-t border-gray-50">
-                        <td class="p-4 font-bold">${item.name}<br><span class="text-[10px] text-gray-400 font-normal">${item.sub}</span></td>
-                        <td class="text-center">${item.p[0]}/${item.r[0]}</td>
-                        <td class="text-center">${item.p[1]}/${item.r[1]}</td>
-                        <td class="text-center">${item.p[2]}/${item.r[2]}</td>
-                        <td class="text-center">${item.p[3]}/${item.r[3]}</td>
-                        <td class="text-center">${getStatus(item.p[0], item.r[0], false)} | ${getStatus(item.p[3], item.r[3], true)}</td>
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-4 font-bold text-slate-700">${cls}</td>
+                        <td class="text-center text-sm">${item.p[0]} / ${item.r[0]}</td>
+                        <td class="text-center text-sm">${item.p[1]} / ${item.r[1]}</td>
+                        <td class="text-center text-sm">${item.p[2]} / ${item.r[2]}</td>
+                        <td class="text-center text-sm font-medium ${item.r[3] > item.p[3] ? 'text-red-500' : ''}">${item.p[3]} / ${item.r[3]}</td>
+                        <td class="text-right p-4">${getStatus(item.p[0], item.r[0], false)} ${getStatus(item.p[3], item.r[3], true)}</td>
                     </tr>`;
             });
 
-            if(classList.length > 0) {
-                const avgP = sumP.map(v => (v / classList.length).toFixed(1));
-                const avgR = sumR.map(v => (v / classList.length).toFixed(1));
-                tfoot.innerHTML = `
-                    <tr>
-                        <td class="p-4">TRUNG BÌNH (${classList.length} LỚP)</td>
-                        <td class="text-center">${avgP[0]}/${avgR[0]}</td><td class="text-center">${avgP[1]}/${avgR[1]}</td>
-                        <td class="text-center">${avgP[2]}/${avgR[2]}</td><td class="text-center">${avgP[3]}/${avgR[3]}</td>
-                        <td class="text-center">${getStatus(avgP[0], avgR[0], false)} | ${getStatus(avgP[3], avgR[3], true)}</td>
-                    </tr>`;
+            if(classes.length > 0) {
+                const avgP = sumP.map(v => (v / classes.length).toFixed(1));
+                const avgR = sumR.map(v => (v / classes.length).toFixed(1));
                 renderChart(avgP, avgR);
             }
         }
 
         function renderChart(pData, rData) {
-            const ctx = document.getElementById('summaryChart').getContext('2d');
-            if(chart) chart.destroy();
-            chart = new Chart(ctx, {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            if(chartInstance) chartInstance.destroy();
+            chartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: ['Tốt', 'Khá', 'Đạt', 'Chưa đạt'],
                     datasets: [
-                        { label: 'TB Kế hoạch', data: pData, backgroundColor: '#e5e7eb', borderRadius: 4 },
-                        { label: 'TB Kết quả', data: rData, backgroundColor: '#3b82f6', borderRadius: 4 }
+                        { label: 'TB Kế hoạch', data: pData, backgroundColor: '#cbd5e1', borderRadius: 6 },
+                        { label: 'TB Kết quả', data: rData, backgroundColor: '#2563eb', borderRadius: 6 }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+                }
             });
         }
-
-        function clearAll() { if(confirm("Xóa sạch dữ liệu?")) { classList = []; updateUI(); if(chart) chart.destroy(); } }
     </script>
 </body>
 </html>
