@@ -3,153 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phân tích Kết quả Học tập</title>
+    <title>Quản lý Kết quả Giảng dạy - Đa lớp</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-        .field-input { @apply w-full px-3 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 transition-all text-center text-sm; }
-        .status-pill { @apply px-2 py-1 rounded-md text-[10px] font-bold uppercase inline-block min-w-[70px] text-center; }
+        .field-input { @apply w-full px-2 py-1 border border-gray-200 rounded outline-none focus:ring-2 focus:ring-blue-500 text-center text-sm; }
+        .status-pill { @apply px-2 py-0.5 rounded text-[10px] font-bold uppercase inline-block min-w-[60px] text-center; }
+        th { @apply text-[10px] font-bold text-gray-400 uppercase p-2 text-center; }
+        td { @apply p-2 border-t border-gray-50; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4 md:p-6">
 
-    <div class="max-w-6xl mx-auto">
-        <header class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">Trình tạo biểu đồ so sánh</h1>
-            <p class="text-gray-500 text-sm">So sánh Kế hoạch và Kết quả thực tế</p>
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">Báo cáo Giảng dạy Tổng hợp</h1>
+                <p class="text-gray-500 text-sm">Quản lý nhiều lớp và tính toán trung bình chung</p>
+            </div>
+            <button onclick="clearAll()" class="text-red-500 text-xs font-bold hover:underline">XÓA TẤT CẢ DỮ LIỆU</button>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-5 space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="grid grid-cols-2 gap-4 mb-6">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Lớp</label>
-                            <input type="text" id="classInput" placeholder="VD: 10A7" class="field-input !text-left">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-400 uppercase mb-1">Môn học</label>
-                            <input type="text" id="subjectInput" placeholder="VD: Công nghệ" class="field-input !text-left">
-                        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-4">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                    <h2 class="text-sm font-bold mb-4 text-blue-600 uppercase italic">Thêm dữ liệu lớp học</h2>
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <input type="text" id="classIn" placeholder="Tên lớp (10A7)" class="field-input !text-left">
+                        <input type="text" id="subIn" placeholder="Môn học" class="field-input !text-left">
                     </div>
 
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-12 gap-2 text-[10px] font-bold text-gray-400 uppercase">
-                            <div class="col-span-3">Tiêu chí</div>
-                            <div class="col-span-3 text-center">Kế hoạch</div>
-                            <div class="col-span-3 text-center">Kết quả</div>
-                            <div class="col-span-3 text-right">Ghi chú</div>
-                        </div>
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr>
+                                <th class="text-left">Tiêu chí</th>
+                                <th>K.Hoạch</th>
+                                <th>K.Quả</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Tốt</td><td><input type="number" id="p1" class="field-input"></td><td><input type="number" id="r1" class="field-input bg-blue-50"></td></tr>
+                            <tr><td>Khá</td><td><input type="number" id="p2" class="field-input"></td><td><input type="number" id="r2" class="field-input bg-blue-50"></td></tr>
+                            <tr><td>Đạt</td><td><input type="number" id="p3" class="field-input"></td><td><input type="number" id="r3" class="field-input bg-blue-50"></td></tr>
+                            <tr><td>C.Đạt</td><td><input type="number" id="p4" class="field-input"></td><td><input type="number" id="r4" class="field-input bg-red-50"></td></tr>
+                        </tbody>
+                    </table>
+                    <button onclick="saveClass()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg mt-4 hover:bg-blue-700 transition-all">LƯU VÀO DANH SÁCH</button>
+                </div>
+            </div>
 
-                        <div id="inputRows" class="space-y-3">
-                            <div class="grid grid-cols-12 gap-2 items-center">
-                                <div class="col-span-3 text-sm font-medium text-gray-700">Tốt</div>
-                                <div class="col-span-3"><input type="number" id="p1" oninput="updateNote(1, 'positive')" class="field-input" placeholder="0"></div>
-                                <div class="col-span-3"><input type="number" id="r1" oninput="updateNote(1, 'positive')" class="field-input bg-blue-50" placeholder="0"></div>
-                                <div class="col-span-3 text-right"><span id="n1" class="status-pill bg-gray-100 text-gray-400">---</span></div>
-                            </div>
-                            <div class="grid grid-cols-12 gap-2 items-center">
-                                <div class="col-span-3 text-sm font-medium text-gray-700">Khá</div>
-                                <div class="col-span-3"><input type="number" id="p2" oninput="updateNote(2, 'positive')" class="field-input" placeholder="0"></div>
-                                <div class="col-span-3"><input type="number" id="r2" oninput="updateNote(2, 'positive')" class="field-input bg-blue-50" placeholder="0"></div>
-                                <div class="col-span-3 text-right"><span id="n2" class="status-pill bg-gray-100 text-gray-400">---</span></div>
-                            </div>
-                            <div class="grid grid-cols-12 gap-2 items-center">
-                                <div class="col-span-3 text-sm font-medium text-gray-700">Đạt</div>
-                                <div class="col-span-3"><input type="number" id="p3" oninput="updateNote(3, 'positive')" class="field-input" placeholder="0"></div>
-                                <div class="col-span-3"><input type="number" id="r3" oninput="updateNote(3, 'positive')" class="field-input bg-blue-50" placeholder="0"></div>
-                                <div class="col-span-3 text-right"><span id="n3" class="status-pill bg-gray-100 text-gray-400">---</span></div>
-                            </div>
-                            <div class="grid grid-cols-12 gap-2 items-center">
-                                <div class="col-span-3 text-sm font-medium text-gray-700">C.Đạt</div>
-                                <div class="col-span-3"><input type="number" id="p4" oninput="updateNote(4, 'negative')" class="field-input" placeholder="0"></div>
-                                <div class="col-span-3"><input type="number" id="r4" oninput="updateNote(4, 'negative')" class="field-input bg-red-50" placeholder="0"></div>
-                                <div class="col-span-3 text-right"><span id="n4" class="status-pill bg-gray-100 text-gray-400">---</span></div>
-                            </div>
-                        </div>
-
-                        <button onclick="renderChart()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl mt-4 transition-all shadow-lg active:scale-95">
-                            Cập nhật biểu đồ
-                        </button>
+            <div class="lg:col-span-8">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 h-full flex flex-col">
+                    <h2 class="text-sm font-bold mb-4 text-gray-700 uppercase">Biểu đồ Trung bình Chung (Tất cả các lớp)</h2>
+                    <div class="relative flex-grow min-h-[300px]">
+                        <canvas id="summaryChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <div class="lg:col-span-7">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-full min-h-[450px] flex flex-col">
-                    <div id="chartHeader" class="text-lg font-bold text-gray-700 mb-8">Xem trước kết quả</div>
-                    <div class="relative flex-grow">
-                        <canvas id="myChart"></canvas>
-                    </div>
+            <div class="lg:col-span-12">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="text-left">Lớp / Môn</th>
+                                <th>Tốt (KH/KQ)</th>
+                                <th>Khá (KH/KQ)</th>
+                                <th>Đạt (KH/KQ)</th>
+                                <th>C.Đạt (KH/KQ)</th>
+                                <th>Đánh giá</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            </tbody>
+                        <tfoot id="tableFoot" class="bg-blue-50 font-bold">
+                            </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let chartInstance;
-        const ctx = document.getElementById('myChart').getContext('2d');
+        let classList = [];
+        let chart;
 
-        function updateNote(id, type) {
-            const plan = parseFloat(document.getElementById(`p${id}`).value);
-            const res = parseFloat(document.getElementById(`r${id}`).value);
-            const noteSpan = document.getElementById(`n${id}`);
+        function saveClass() {
+            const className = document.getElementById('classIn').value;
+            const subject = document.getElementById('subIn').value;
+            if(!className) return alert("Vui lòng nhập tên lớp");
 
-            if (isNaN(plan) || isNaN(res)) {
-                noteSpan.innerText = "---";
-                noteSpan.className = "status-pill bg-gray-100 text-gray-400";
-                return;
-            }
+            const data = {
+                name: className,
+                sub: subject,
+                p: [1,2,3,4].map(i => parseFloat(document.getElementById(`p${i}`).value) || 0),
+                r: [1,2,3,4].map(i => parseFloat(document.getElementById(`r${i}`).value) || 0)
+            };
 
-            let isSuccess = false;
-            if (type === 'positive') {
-                // Cho Tốt, Khá, Đạt: Càng cao càng tốt
-                isSuccess = res >= plan;
-            } else {
-                // Cho Chưa đạt: Càng thấp càng tốt (Kết quả <= Kế hoạch là Đạt)
-                isSuccess = res <= plan;
-            }
+            classList.push(data);
+            updateUI();
+            
+            // Reset input
+            document.getElementById('classIn').value = '';
+            [1,2,3,4].forEach(i => { document.getElementById(`p${i}`).value = ''; document.getElementById(`r${i}`).value = ''; });
+        }
 
-            if (isSuccess) {
-                noteSpan.innerText = "Đạt";
-                noteSpan.className = "status-pill bg-green-100 text-green-600";
-            } else {
-                noteSpan.innerText = "Chưa đạt";
-                noteSpan.className = "status-pill bg-red-100 text-red-600";
+        function getStatus(plan, res, isCDat) {
+            const isOk = isCDat ? (res <= plan) : (res >= plan);
+            return isOk ? 
+                '<span class="status-pill bg-green-100 text-green-600">Đạt</span>' : 
+                '<span class="status-pill bg-red-100 text-red-600">Chưa đạt</span>';
+        }
+
+        function updateUI() {
+            const tbody = document.getElementById('tableBody');
+            const tfoot = document.getElementById('tableFoot');
+            tbody.innerHTML = '';
+
+            let sumP = [0,0,0,0], sumR = [0,0,0,0];
+
+            classList.forEach(item => {
+                item.p.forEach((v, i) => sumP[i] += v);
+                item.r.forEach((v, i) => sumR[i] += v);
+
+                let row = `<tr>
+                    <td class="font-bold">${item.name} <br><span class="text-[10px] text-gray-400 font-normal">${item.sub}</span></td>
+                    <td class="text-center">${item.p[0]}/${item.r[0]}</td>
+                    <td class="text-center">${item.p[1]}/${item.r[1]}</td>
+                    <td class="text-center">${item.p[2]}/${item.r[2]}</td>
+                    <td class="text-center">${item.p[3]}/${item.r[3]}</td>
+                    <td class="text-center">
+                        T:${getStatus(item.p[0], item.r[0], false)} 
+                        CĐ:${getStatus(item.p[3], item.r[3], true)}
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+
+            if(classList.length > 0) {
+                const avgP = sumP.map(v => (v / classList.length).toFixed(1));
+                const avgR = sumR.map(v => (v / classList.length).toFixed(1));
+
+                tfoot.innerHTML = `<tr class="border-t-2 border-blue-200">
+                    <td class="text-blue-700">TRUNG BÌNH CHUNG (${classList.length} lớp)</td>
+                    <td class="text-center text-blue-700">${avgP[0]} / ${avgR[0]}</td>
+                    <td class="text-center text-blue-700">${avgP[1]} / ${avgR[1]}</td>
+                    <td class="text-center text-blue-700">${avgP[2]} / ${avgR[2]}</td>
+                    <td class="text-center text-blue-700">${avgP[3]} / ${avgR[3]}</td>
+                    <td class="text-center italic text-[11px]">
+                        T:${getStatus(avgP[0], avgR[0], false)}
+                        CĐ:${getStatus(avgP[3], avgR[3], true)}
+                    </td>
+                </tr>`;
+                renderChart(avgP, avgR);
             }
         }
 
-        function renderChart() {
-            const labels = ['Tốt', 'Khá', 'Đạt', 'Chưa đạt'];
-            const planData = [1,2,3,4].map(id => document.getElementById(`p${id}`).value || 0);
-            const resData = [1,2,3,4].map(id => document.getElementById(`r${id}`).value || 0);
-
-            const className = document.getElementById('classInput').value || '---';
-            const subject = document.getElementById('subjectInput').value || '---';
-            document.getElementById('chartHeader').innerText = `Lớp: ${className} | Môn: ${subject}`;
-
-            if (chartInstance) chartInstance.destroy();
-
-            chartInstance = new Chart(ctx, {
+        function renderChart(pData, rData) {
+            const ctx = document.getElementById('summaryChart').getContext('2d');
+            if(chart) chart.destroy();
+            chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: ['Tốt', 'Khá', 'Đạt', 'Chưa đạt'],
                     datasets: [
-                        { label: 'Kế hoạch', data: planData, backgroundColor: '#e5e7eb', borderRadius: 4 },
-                        { label: 'Kết quả', data: resData, backgroundColor: '#3b82f6', borderRadius: 4 }
+                        { label: 'TB Kế hoạch', data: pData, backgroundColor: '#e5e7eb', borderRadius: 4 },
+                        { label: 'TB Kết quả', data: rData, backgroundColor: '#3b82f6', borderRadius: 4 }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true } }
-                }
+                options: { responsive: true, maintainAspectRatio: false }
             });
         }
 
-        renderChart();
+        function clearAll() { if(confirm("Xóa hết?")) { classList = []; updateUI(); if(chart) chart.destroy(); } }
     </script>
 </body>
 </html>
