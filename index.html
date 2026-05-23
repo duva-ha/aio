@@ -2,166 +2,90 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>So sánh Kế hoạch & Kết quả - 2 File</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Ôn tập Công nghệ 12 - Đề 0601</title>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
-        .btn-action { @apply flex-1 px-4 py-3 rounded-xl font-bold text-sm transition-all shadow-sm flex items-center justify-center gap-2; }
-        .status-pill { @apply px-2 py-0.5 rounded text-[10px] font-bold uppercase; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: auto; padding: 20px; background-color: #f4f4f9; }
+        .question-card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .options { list-style: none; padding: 0; }
+        .options li { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; transition: 0.3s; }
+        .options li:hover { background-color: #e0e0ff; }
+        .correct { background-color: #c8e6c9 !important; border-color: #4caf50 !important; }
+        .wrong { background-color: #ffcdd2 !important; border-color: #f44336 !important; }
+        #result-btn { background: #2196f3; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
     </style>
 </head>
-<body class="p-4 md:p-8 text-slate-700">
-
-    <div class="max-w-6xl mx-auto">
-        <header class="mb-8 flex flex-col md:flex-row justify-between items-end gap-4 border-b border-slate-200 pb-6">
-            <div>
-                <h1 class="text-3xl font-bold text-slate-900">Đối soát Kế hoạch & Kết quả</h1>
-                <p class="text-slate-500">Tự động khớp dữ liệu từ hai file Excel riêng biệt</p>
-            </div>
-            <button onclick="location.reload()" class="text-slate-400 hover:text-red-500 text-xs font-bold uppercase tracking-widest">Làm mới trang</button>
-        </header>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            <div class="bg-white p-6 rounded-2xl border border-dashed border-blue-300 flex flex-col items-center">
-                <span class="text-blue-500 mb-2">📁 Bước 1</span>
-                <input type="file" id="planFile" class="hidden" accept=".xlsx, .xls" onchange="readExcel(this, 'plan')">
-                <button onclick="document.getElementById('planFile').click()" class="btn-action bg-blue-600 text-white hover:bg-blue-700 w-full">
-                    NHẬP FILE KẾ HOẠCH
-                </button>
-                <div id="planStatus" class="mt-2 text-xs text-slate-400 italic font-medium">Chưa có dữ liệu kế hoạch</div>
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl border border-dashed border-emerald-300 flex flex-col items-center">
-                <span class="text-emerald-500 mb-2">📁 Bước 2</span>
-                <input type="file" id="resultFile" class="hidden" accept=".xlsx, .xls" onchange="readExcel(this, 'result')">
-                <button onclick="document.getElementById('resultFile').click()" class="btn-action bg-emerald-600 text-white hover:bg-emerald-700 w-full">
-                    NHẬP FILE KẾT QUẢ
-                </button>
-                <div id="resultStatus" class="mt-2 text-xs text-slate-400 italic font-medium">Chưa có dữ liệu kết quả</div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-12">
-                <div class="bg-white p-6 rounded-2xl shadow-sm h-[400px]">
-                    <h2 class="font-bold text-slate-800 mb-4 uppercase text-sm tracking-widest">So sánh Trung bình cộng toàn khối</h2>
-                    <canvas id="mainChart"></canvas>
-                </div>
-            </div>
-
-            <div class="lg:col-span-12">
-                <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-slate-50 border-b border-slate-100">
-                            <tr>
-                                <th class="p-4 text-xs font-bold text-slate-400 uppercase">Lớp</th>
-                                <th class="text-center text-xs font-bold text-slate-400 uppercase">Tốt (KH/KQ)</th>
-                                <th class="text-center text-xs font-bold text-slate-400 uppercase">Khá (KH/KQ)</th>
-                                <th class="text-center text-xs font-bold text-slate-400 uppercase">Đạt (KH/KQ)</th>
-                                <th class="text-center text-xs font-bold text-red-400 uppercase">Chưa đạt (KH/KQ)</th>
-                                <th class="text-right p-4 text-xs font-bold text-slate-400 uppercase">Đánh giá</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody" class="divide-y divide-slate-50">
-                            <tr><td colspan="6" class="p-8 text-center text-slate-400 italic">Vui lòng nhập cả 2 file để bắt đầu so sánh...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+<body>
+    <h1>Trắc nghiệm Công nghệ 12 - Đề 0601</h1>
+    <div id="quiz-container"></div>
+    <button id="result-btn" onclick="checkAnswers()">Nộp bài / Xem kết quả</button>
+    <h2 id="score"></h2>
 
     <script>
-        let db = {}; // Cấu trúc: { "10A1": { p: [0,0,0,0], r: [0,0,0,0] } }
-        let chartInstance;
-
-        function readExcel(input, type) {
-            const file = input.files[0];
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                const rows = XLSX.utils.sheet_to_json(sheet, {header: 1});
-
-                rows.forEach((row, index) => {
-                    if (index === 0 || !row[0]) return; // Bỏ qua tiêu đề
-                    const className = String(row[0]).trim();
-                    if (!db[className]) db[className] = { p: [0,0,0,0], r: [0,0,0,0] };
-                    
-                    const values = [row[1]||0, row[2]||0, row[3]||0, row[4]||0];
-                    if (type === 'plan') db[className].p = values;
-                    else db[className].r = values;
-                });
-
-                document.getElementById(`${type}Status`).innerText = `Đã tải ${Object.keys(db).length} lớp`;
-                document.getElementById(`${type}Status`).className = "mt-2 text-xs text-blue-600 font-bold italic";
-                updateUI();
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function getStatus(plan, res, isCDat) {
-            const isOk = isCDat ? (res <= plan) : (res >= plan);
-            return isOk ? 
-                '<span class="status-pill bg-green-100 text-green-600">Đạt</span>' : 
-                '<span class="status-pill bg-red-100 text-red-600">K.Đạt</span>';
-        }
-
-        function updateUI() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-            
-            let sumP = [0,0,0,0], sumR = [0,0,0,0];
-            const classes = Object.keys(db);
-
-            classes.forEach(cls => {
-                const item = db[cls];
-                item.p.forEach((v, i) => sumP[i] += v);
-                item.r.forEach((v, i) => sumR[i] += v);
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-4 font-bold text-slate-700">${cls}</td>
-                        <td class="text-center text-sm">${item.p[0]} / ${item.r[0]}</td>
-                        <td class="text-center text-sm">${item.p[1]} / ${item.r[1]}</td>
-                        <td class="text-center text-sm">${item.p[2]} / ${item.r[2]}</td>
-                        <td class="text-center text-sm font-medium ${item.r[3] > item.p[3] ? 'text-red-500' : ''}">${item.p[3]} / ${item.r[3]}</td>
-                        <td class="text-right p-4">${getStatus(item.p[0], item.r[0], false)} ${getStatus(item.p[3], item.r[3], true)}</td>
-                    </tr>`;
-            });
-
-            if(classes.length > 0) {
-                const avgP = sumP.map(v => (v / classes.length).toFixed(1));
-                const avgR = sumR.map(v => (v / classes.length).toFixed(1));
-                renderChart(avgP, avgR);
+        const quizData = [
+            {
+                question: "Câu 1: Một công tơ điện có cấp chính xác là cấp 2. Ý nghĩa của thông số này là?",
+                options: ["A. Sai số đo là ±2 kWh", "B. Dòng điện quá tải tối đa là 2%", "C. Sai số đo lượng điện năng tiêu thụ là 2%", "D. Kết quả đo chính xác đến hàng phần trăm"],
+                correct: 2 // Đáp án C
+            },
+            {
+                question: "Câu 2: ROM và RAM là hai thành phần có trong khối nào của vi điều khiển?",
+                options: ["A. Đầu vào", "B. Đầu ra", "C. Bộ xử lí trung tâm", "D. Bộ nhớ"],
+                correct: 3 // Đáp án D
+            },
+            {
+                question: "Câu 10: Trong bốn đơn vị đo dưới đây, đơn vị đo giá trị điện trở là?",
+                options: ["A. Ohm (Ω)", "B. Watt (W)", "C. Volt (V)", "D. Ampe (A)"],
+                correct: 0 // Đáp án A
+            },
+            {
+                question: "Câu 13: Kí hiệu (hình tam giác có gạch ngang ở đầu) là của linh kiện điện tử nào?",
+                options: ["A. Diode", "B. Transistor", "C. Tụ điện", "D. Điện trở"],
+                correct: 0 // Đáp án A
             }
+        ];
+
+        function loadQuiz() {
+            const container = document.getElementById('quiz-container');
+            quizData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `<h3>${item.question}</h3><ul class="options" id="q${index}"></ul>`;
+                container.appendChild(card);
+                
+                const optionList = document.getElementById(`q${index}`);
+                item.options.forEach((opt, i) => {
+                    const li = document.createElement('li');
+                    li.innerText = opt;
+                    li.onclick = () => selectOption(index, i, li);
+                    optionList.appendChild(li);
+                });
+            });
         }
 
-        function renderChart(pData, rData) {
-            const ctx = document.getElementById('mainChart').getContext('2d');
-            if(chartInstance) chartInstance.destroy();
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Tốt', 'Khá', 'Đạt', 'Chưa đạt'],
-                    datasets: [
-                        { label: 'TB Kế hoạch', data: pData, backgroundColor: '#cbd5e1', borderRadius: 6 },
-                        { label: 'TB Kết quả', data: rData, backgroundColor: '#2563eb', borderRadius: 6 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } },
-                    scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+        let userAnswers = {};
+        function selectOption(qIdx, optIdx, element) {
+            const options = document.getElementById(`q${qIdx}`).children;
+            for (let li of options) li.style.backgroundColor = "";
+            element.style.backgroundColor = "#bbdefb";
+            userAnswers[qIdx] = optIdx;
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            quizData.forEach((item, index) => {
+                const options = document.getElementById(`q${index}`).children;
+                if (userAnswers[index] === item.correct) {
+                    score++;
+                    options[item.correct].classList.add('correct');
+                } else if (userAnswers[index] !== undefined) {
+                    options[userAnswers[index]].classList.add('wrong');
+                    options[item.correct].classList.add('correct');
                 }
             });
+            document.getElementById('score').innerText = `Kết quả của bạn: ${score}/${quizData.length}`;
         }
+
+        loadQuiz();
     </script>
 </body>
 </html>
