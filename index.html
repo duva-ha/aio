@@ -2,90 +2,214 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Ôn tập Công nghệ 12 - Đề 0601</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn tập Trắc nghiệm Công nghệ - Đề 0601</title>
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: auto; padding: 20px; background-color: #f4f4f9; }
-        .question-card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; max-width: 900px; margin: auto; padding: 20px; background-color: #f0f2f5; }
+        .header { text-align: center; background: #1a73e8; color: white; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+        .section-title { background: #e8f0fe; padding: 10px; border-left: 5px solid #1a73e8; margin: 20px 0; font-weight: bold; }
+        .question-card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .options { list-style: none; padding: 0; }
-        .options li { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; transition: 0.3s; }
-        .options li:hover { background-color: #e0e0ff; }
-        .correct { background-color: #c8e6c9 !important; border-color: #4caf50 !important; }
-        .wrong { background-color: #ffcdd2 !important; border-color: #f44336 !important; }
-        #result-btn { background: #2196f3; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        .options li { margin: 8px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; transition: 0.2s; }
+        .options li:hover { background-color: #f1f3f4; }
+        .selected { background-color: #d2e3fc !important; border-color: #1a73e8 !important; }
+        
+        /* Style cho phần Đúng/Sai */
+        .tf-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .tf-table th, .tf-table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        .tf-table td:first-child { text-align: left; width: 70%; }
+        .tf-btn { padding: 5px 15px; border: 1px solid #ccc; background: white; cursor: pointer; border-radius: 3px; }
+        .tf-btn.active-true { background-color: #4caf50; color: white; border-color: #388e3c; }
+        .tf-btn.active-false { background-color: #f44336; color: white; border-color: #d32f2f; }
+
+        .result-area { text-align: center; margin: 40px 0; }
+        #submit-btn { background: #1a73e8; color: white; padding: 15px 40px; border: none; border-radius: 30px; font-size: 18px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        #submit-btn:hover { background: #1557b0; }
+        
+        .correct-ans { background-color: #c8e6c9 !important; }
+        .wrong-ans { background-color: #ffcdd2 !important; }
+        .score-display { font-size: 24px; font-weight: bold; color: #1a73e8; margin-top: 20px; display: none; }
+        img-placeholder { display: block; background: #eee; padding: 10px; margin: 10px 0; font-style: italic; border-radius: 5px; }
     </style>
 </head>
 <body>
-    <h1>Trắc nghiệm Công nghệ 12 - Đề 0601</h1>
-    <div id="quiz-container"></div>
-    <button id="result-btn" onclick="checkAnswers()">Nộp bài / Xem kết quả</button>
-    <h2 id="score"></h2>
 
-    <script>
-        const quizData = [
-            {
-                question: "Câu 1: Một công tơ điện có cấp chính xác là cấp 2. Ý nghĩa của thông số này là?",
-                options: ["A. Sai số đo là ±2 kWh", "B. Dòng điện quá tải tối đa là 2%", "C. Sai số đo lượng điện năng tiêu thụ là 2%", "D. Kết quả đo chính xác đến hàng phần trăm"],
-                correct: 2 // Đáp án C
-            },
-            {
-                question: "Câu 2: ROM và RAM là hai thành phần có trong khối nào của vi điều khiển?",
-                options: ["A. Đầu vào", "B. Đầu ra", "C. Bộ xử lí trung tâm", "D. Bộ nhớ"],
-                correct: 3 // Đáp án D
-            },
-            {
-                question: "Câu 10: Trong bốn đơn vị đo dưới đây, đơn vị đo giá trị điện trở là?",
-                options: ["A. Ohm (Ω)", "B. Watt (W)", "C. Volt (V)", "D. Ampe (A)"],
-                correct: 0 // Đáp án A
-            },
-            {
-                question: "Câu 13: Kí hiệu (hình tam giác có gạch ngang ở đầu) là của linh kiện điện tử nào?",
-                options: ["A. Diode", "B. Transistor", "C. Tụ điện", "D. Điện trở"],
-                correct: 0 // Đáp án A
-            }
-        ];
+<div class="header">
+    <h1>ÔN TẬP TRẮC NGHIỆM CÔNG NGHỆ 12</h1>
+    <p>Mã đề: 0601 - Kỳ thi Tốt nghiệp THPT 2025</p>
+</div>
 
-        function loadQuiz() {
-            const container = document.getElementById('quiz-container');
-            quizData.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'question-card';
-                card.innerHTML = `<h3>${item.question}</h3><ul class="options" id="q${index}"></ul>`;
-                container.appendChild(card);
-                
-                const optionList = document.getElementById(`q${index}`);
-                item.options.forEach((opt, i) => {
-                    const li = document.createElement('li');
-                    li.innerText = opt;
-                    li.onclick = () => selectOption(index, i, li);
-                    optionList.appendChild(li);
-                });
-            });
+<div id="quiz-content">
+    <div class="section-title">PHẦN I. Câu hỏi trắc nghiệm nhiều phương án lựa chọn (24 câu)</div>
+    <div id="part1-container"></div>
+
+    <div class="section-title">PHẦN II. Câu hỏi trắc nghiệm đúng sai (4 câu)</div>
+    <div id="part2-container"></div>
+</div>
+
+<div class="result-area">
+    <button id="submit-btn" onclick="gradeQuiz()">Nộp bài và Xem kết quả</button>
+    <div id="score-report" class="score-display"></div>
+</div>
+
+<script>
+// Dữ liệu câu hỏi từ nguồn [1-4]
+const part1Data = [
+    { q: "Câu 1: Một công tơ điện có cấp chính xác là cấp 2. Cấp chính xác này có ý nghĩa gì?", options: ["A. Sai số đo lượng điện năng tiêu thụ là ±2 kWh", "B. Dòng điện quá tải cho phép tối đa là 2%", "C. Sai số đo lượng điện năng tiêu thụ là 2%", "D. Kết quả đo chính xác đến hàng phần trăm"], correct: 2 },
+    { q: "Câu 2: ROM và RAM là hai thành phần có trong khối nào của vi điều khiển?", options: ["A. Đầu vào", "B. Đầu ra", "C. Bộ xử lí trung tâm", "D. Bộ nhớ"], correct: 3 },
+    { q: "Câu 3: Ba thành phần chính của hệ thống cơ khí động lực là:", options: ["A. (1) -> (2) -> (3)", "B. (2) -> (1) -> (3)", "C. (1) -> (3) -> (2)", "D. (3) -> (2) -> (1)"], note: "(1) Nguồn động lực; (2) Máy công tác; (3) Hệ thống truyền lực", correct: 2 },
+    { q: "Câu 4: Mạch điện tử nào dưới đây là mạch xử lí tín hiệu tương tự?", options: ["A. Mạch logic tổ hợp", "B. Mạch điều chế biên độ", "C. Mạch đếm sử dụng Flip-Flop D", "D. Mạch so sánh sử dụng cổng logic"], correct: 1 },
+    { q: "Câu 5: (Dựa trên sơ đồ hệ thống điện) Hai trạm biến áp tăng áp có trong hệ thống là?", options: ["A. 22/6 kV và 110/22 kV", "B. 110/22 kV và 220/110 kV", "C. 22/220 kV và 10,5/110 kV", "D. 220/110 kV và 22/6 kV"], correct: 2 },
+    { q: "Câu 6: Động cơ đốt trong KHÔNG có hệ thống nào dưới đây?", options: ["A. Hệ thống lái", "B. Hệ thống bôi trơn", "C. Hệ thống khởi động", "D. Hệ thống làm mát"], correct: 0 },
+    { q: "Câu 7: Hình ảnh minh họa bộ phận nào của ô tô? (Hình bánh xe)", options: ["A. Động cơ", "B. Khung vỏ", "C. Hộp số", "D. Bánh xe"], correct: 3 },
+    { q: "Câu 8: Mạch điện ba pha đối xứng, R = 20 Ohm, Up = 220 V. Dòng điện pha Ip là?", options: ["A. 11 căn 3 A", "B. 13 căn 3 A", "C. 11 A", "D. 13 A"], correct: 2 },
+    { q: "Câu 9: Công thức tính điện áp ra Ura của mạch khuếch đại thuật toán không đảo là?", options: ["A. Ura = (1 + R2/R1)Uvao", "B. Ura = (1 + R1/R2)Uvao", "C. Ura = R2/R1 * Uvao", "D. Ura = R1/R2 * Uvao"], correct: 0 },
+    { q: "Câu 10: Đơn vị đo giá trị điện trở là?", options: ["A. Ohm (Ω)", "B. Watt (W)", "C. Volt (V)", "D. Ampe (A)"], correct: 0 },
+    { q: "Câu 11: Kí hiệu (hình tam giác có vòng tròn nhỏ ở đầu) là cổng logic nào?", options: ["A. Cổng OR", "B. Cổng NAND", "C. Cổng NOT", "D. Cổng NOR"], correct: 2 },
+    { q: "Câu 12: Mạch logic tổ hợp (Cổng NOT nối tiếp cổng AND). X1=1, X2=1 thì đầu ra Y là?", options: ["A. M = 0 và Y = 0", "B. M = 1 và Y = 0", "C. M = 1 và Y = 1", "D. M = 0 và Y = 1"], correct: 0 },
+    { q: "Câu 13: Kí hiệu (hình tam giác có gạch ngang) là của linh kiện nào?", options: ["A. Diode", "B. Transistor", "C. Tụ điện", "D. Điện trở"], correct: 0 },
+    { q: "Câu 14: Hai cấp điện áp nào thuộc lưới điện truyền tải quốc gia?", options: ["A. 35 kV và 22 kV", "B. 500 kV và 220 kV", "C. 35 kV và 0,4 kV", "D. 22 kV và 0,4 kV"], correct: 1 },
+    { q: "Câu 15: Thiết bị có chức năng đóng cắt nguồn điện cho tải công suất nhỏ trong gia đình?", options: ["A. Công tơ điện", "B. Cầu chì", "C. Công tắc điện", "D. Ổ cắm điện"], correct: 2 },
+    { q: "Câu 16: Trong chu trình động cơ 4 kì, hai kì nào piston di chuyển từ ĐCD lên ĐCT?", options: ["A. Nạp và Cháy-giãn nở", "B. Nén và Thải", "C. Nén và Cháy-giãn nở", "D. Nạp và Nén"], correct: 1 },
+    { q: "Câu 17: Hình chiếu vuông góc của vật thể đơn giản (hướng chiếu từ trước)?", options: ["A. Hình 3", "B. Hình 2", "C. Hình 1", "D. Hình 4"], correct: 1 },
+    { q: "Câu 18: Ngành nghề nào thuộc lĩnh vực kĩ thuật điện?", options: ["A. Kĩ sư xây dựng", "B. Kĩ sư môi trường", "C. Kĩ sư điện", "D. Kĩ sư cơ khí"], correct: 2 },
+    { q: "Câu 19: Dựa vào bảng thông số, loại đèn nào tiết kiệm điện năng nhất?", options: ["A. Đèn ống huỳnh quang", "B. Đèn LED", "C. Đèn compact", "D. Đèn sợi đốt"], correct: 1 },
+    { q: "Câu 20: Hình nào biểu diễn đúng hình cắt A-A?", options: ["A. Hình 3", "B. Hình 2", "C. Hình 4", "D. Hình 1"], correct: 2 },
+    { q: "Câu 21: Đường gióng kích thước vẽ bằng loại nét nào?", options: ["A. Nét lượn sóng", "B. Nét liền mảnh", "C. Nét liền đậm", "D. Nét đứt mảnh"], correct: 1 },
+    { q: "Câu 22: Điện trở 27 kOhm. Hai vòng màu đầu tiên lần lượt là?", options: ["A. Đỏ, Cam", "B. Đỏ, Tím", "C. Nâu, Cam", "D. Nâu, Tím"], correct: 1 },
+    { q: "Câu 23: Hộp số thuộc hệ thống nào trong ô tô?", options: ["A. Hệ thống treo", "B. Hệ thống điện", "C. Hệ thống lái", "D. Hệ thống truyền lực"], correct: 3 },
+    { q: "Câu 24: Máy bơm 1500W-220V, cos phi=0.8, hat=2. Chọn Aptomat phù hợp?", options: ["A. 10 A", "B. 20 A", "C. 16 A", "D. 6 A"], correct: 1 }
+];
+
+const part2Data = [
+    {
+        title: "Câu 1: Sơ đồ điện phòng bếp",
+        statements: [
+            { text: "a) Aptomat Ap1 là thiết bị đóng cắt và bảo vệ cho toàn mạch điện.", correct: true },
+            { text: "b) Cầu chì CC dùng bảo vệ ngắn mạch cho công tắc, bóng đèn và ổ cắm.", correct: true },
+            { text: "c) Với mật độ J=6A/mm2, dây dẫn chính chọn 4mm2, dây nhánh chọn 2.5mm2 là phù hợp.", correct: true },
+            { text: "d) Với hat=1.2, Aptomat Ap2 cho bếp chọn dòng 16A là phù hợp.", correct: false }
+        ]
+    },
+    {
+        title: "Câu 2: Mạch ứng dụng IC khuếch đại thuật toán (R1=1k, R2=2.2k, Uv=1V)",
+        statements: [
+            { text: "a) Đây là mạch khuếch đại đảo.", correct: true },
+            { text: "b) Điện áp ra tính bằng công thức Ura = (R2/R1) * Uvao.", correct: false },
+            { text: "c) Điện áp ra Ura = + 2.2 V.", correct: false },
+            { text: "d) Nếu thay R2 = 2k thì điện áp ra Ura = + 2 V.", correct: false }
+        ]
+    },
+    {
+        title: "Câu 3: Mạch báo cửa mở dùng cổng logic",
+        statements: [
+            { text: "a) Hai cổng logic sử dụng trong mạch là AND và OR.", correct: true },
+            { text: "b) Hàm logic của lối ra Y2 là Y2 = X1 * X2.", correct: false },
+            { text: "c) Khi có người mở cửa bước vào (X1=1, X2=1), chuông và nhạc đều phát.", correct: true },
+            { text: "d) Thay AND bằng NAND thì nhạc sẽ phát liên tục và dừng khi có người vào.", correct: false }
+        ]
+    },
+    {
+        title: "Câu 4: Mạch điện ba pha đối xứng (Ud/Up = 380/220V)",
+        statements: [
+            { text: "a) Tải 1 nối hình sao có dây trung tính.", correct: true },
+            { text: "b) Điện áp pha của Tải 2 (nối tam giác) là 220V.", correct: false },
+            { text: "c) Dòng điện pha của Tải 2 (R=38 Ohm) là 10 A.", correct: true },
+            { text: "d) Nếu Tải 1 nối theo cách của Tải 2 thì bóng đèn vẫn sáng bình thường.", correct: false }
+        ]
+    }
+];
+
+// Khởi tạo giao diện
+function initQuiz() {
+    const p1Container = document.getElementById('part1-container');
+    part1Data.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.innerHTML = `<div><strong>${item.q}</strong></div>
+            ${item.note ? `<div style='font-size:0.9em; color:#666'>${item.note}</div>` : ''}
+            <ul class="options" id="p1-q${index}">
+                ${item.options.map((opt, i) => `<li onclick="selectP1(${index}, ${i})">${opt}</li>`).join('')}
+            </ul>`;
+        p1Container.appendChild(card);
+    });
+
+    const p2Container = document.getElementById('part2-container');
+    part2Data.forEach((item, qIdx) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        let tableHtml = `<table class="tf-table"><tr><th>Phát biểu</th><th>Đúng</th><th>Sai</th></tr>`;
+        item.statements.forEach((st, sIdx) => {
+            tableHtml += `<tr>
+                <td>${st.text}</td>
+                <td><button class="tf-btn" id="q${qIdx}-s${sIdx}-t" onclick="selectP2(${qIdx}, ${sIdx}, true)">Đ</button></td>
+                <td><button class="tf-btn" id="q${qIdx}-s${sIdx}-f" onclick="selectP2(${qIdx}, ${sIdx}, false)">S</button></td>
+            </tr>`;
+        });
+        tableHtml += `</table>`;
+        card.innerHTML = `<div><strong>${item.title}</strong></div>${tableHtml}`;
+        p2Container.appendChild(card);
+    });
+}
+
+let answersP1 = {};
+function selectP1(qIdx, optIdx) {
+    const options = document.getElementById(`p1-q${qIdx}`).children;
+    for(let li of options) li.classList.remove('selected');
+    options[optIdx].classList.add('selected');
+    answersP1[qIdx] = optIdx;
+}
+
+let answersP2 = {};
+function selectP2(qIdx, sIdx, val) {
+    const btnT = document.getElementById(`q${qIdx}-s${sIdx}-t`);
+    const btnF = document.getElementById(`q${qIdx}-s${sIdx}-f`);
+    btnT.classList.remove('active-true');
+    btnF.classList.remove('active-false');
+    
+    if(val) btnT.classList.add('active-true');
+    else btnF.classList.add('active-false');
+    
+    if(!answersP2[qIdx]) answersP2[qIdx] = {};
+    answersP2[qIdx][sIdx] = val;
+}
+
+function gradeQuiz() {
+    let score = 0;
+    // Chấm Phần 1
+    part1Data.forEach((item, index) => {
+        const options = document.getElementById(`p1-q${index}`).children;
+        if(answersP1[index] === item.correct) {
+            score++;
+            options[item.correct].classList.add('correct-ans');
+        } else {
+            if(answersP1[index] !== undefined) options[answersP1[index]].classList.add('wrong-ans');
+            options[item.correct].classList.add('correct-ans');
         }
+    });
 
-        let userAnswers = {};
-        function selectOption(qIdx, optIdx, element) {
-            const options = document.getElementById(`q${qIdx}`).children;
-            for (let li of options) li.style.backgroundColor = "";
-            element.style.backgroundColor = "#bbdefb";
-            userAnswers[qIdx] = optIdx;
-        }
+    // Chấm Phần 2 (Tạm tính mỗi ý đúng 0.25đ hoặc theo quy tắc THPT)
+    let p2Correct = 0;
+    part2Data.forEach((item, qIdx) => {
+        item.statements.forEach((st, sIdx) => {
+            const userVal = answersP2[qIdx] ? answersP2[qIdx][sIdx] : null;
+            const btnT = document.getElementById(`q${qIdx}-s${sIdx}-t`);
+            const btnF = document.getElementById(`q${qIdx}-s${sIdx}-f`);
+            
+            if(st.correct === true) btnT.style.border = "3px solid green";
+            else btnF.style.border = "3px solid green";
 
-        function checkAnswers() {
-            let score = 0;
-            quizData.forEach((item, index) => {
-                const options = document.getElementById(`q${index}`).children;
-                if (userAnswers[index] === item.correct) {
-                    score++;
-                    options[item.correct].classList.add('correct');
-                } else if (userAnswers[index] !== undefined) {
-                    options[userAnswers[index]].classList.add('wrong');
-                    options[item.correct].classList.add('correct');
-                }
-            });
-            document.getElementById('score').innerText = `Kết quả của bạn: ${score}/${quizData.length}`;
-        }
+            if(userVal === st.correct) p2Correct++;
+        });
+    });
 
-        loadQuiz();
-    </script>
+    const report = document.getElementById('score-report');
+    report.style.display = 'block';
+    report.innerHTML = `Kết quả:<br>Phần I: ${score}/24 câu đúng<br>Phần II: ${p2Correct}/16 ý đúng`;
+    window.scrollTo(0, document.body.scrollHeight);
+}
+
+initQuiz();
+</script>
 </body>
 </html>
